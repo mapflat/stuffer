@@ -30,12 +30,14 @@ command arguments on the command line, e.g.::
 
   stuffer 'apt.Install("mercurial")'
 
+
 Multiple arguments are concatenated into a multiple line Python recipe::
 
   stuffer \
     'for pkg in "mercurial", "gradle", "python-nose":' \
     '  println "Installing", pkg' \
     '  apt.Install(pkg)'
+
 
 Reused recipes can be factored out into Python modules for easier reuse::
 
@@ -47,6 +49,7 @@ Reused recipes can be factored out into Python modules for easier reuse::
     class Tools(Group):
       def children(self):
         return [apt.Install(p) for p in "mercurial", "gradle", "python-nose"]
+
 
 Stuffer comes with builtin knowledge of Docker best practices, which it can enforce for you::
 
@@ -68,11 +71,21 @@ Design goals
 Stuffer gives priority to:
 
 * Simplicity of use. No knowledge about the tool should be required in order to use it for simple scenarios by copying
-  examples.
-* Ease of reuse.
-* Docker cache friendliness.
-* No dislike factors.
-* Ease of debugging.
+  examples. Some simplicity in the implementation is sacrificed in order to make the usage interface simple.
+* Ease of reuse. It should be simple to extract commands from snippets and put into reusable modules.
+* Docker cache friendliness. Images built with similar commands should be able to share a prefix of commands in order to
+  benefit frmo Docker image caching.
+* No dislike factors. Provisioning tools tend to be both loved and hated by users, for various reasons. There should be
+  no reason to have a strong dislike for stuffer.
+* Ease of debugging. Debugging stuffer recipes should be as easy as debugging standard Python programs.
 
-In addition, the project model is design to facilitate sharing and reuse of code between users.
+Moreover, the project model is design to facilitate sharing and reuse of code between users, see below. 
 
+
+-------------------
+Collaboration model
+-------------------
+
+Users are encouraged to put recipes under sites/ for others to get inspired. One package will be built for each
+site. Snippets worth reuse can be put under stuffer/contrib/. Files under stuffer/contrib are expected to be maintained
+by the contributor.
