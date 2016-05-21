@@ -1,18 +1,49 @@
 import logging
+import os
+
+os.environ['LANG'] = 'C.UTF-8'
+os.environ['LC_ALL'] = 'C.UTF-8'
 
 import click
+import sys
 
 from . import apt
+from . import pip
 from .core import Action
+
+
+def command_script(file_path, operations):
+    if operations:
+        if file_path:
+            raise click.UsageError("Cannot pass both --file/-f and operations on command line")
+        return "\n".join(operations) + "\n"
+    logging.info("Reading commands from %s", file_path)
+    with open(file_path) as f:
+        contents = f.read()
+        logging.info("Read %d bytes from %s", len(contents), file_path)
+        return contents
+
+
+def script_substance(content):
+    all_lines = content.splitlines()
+    no_comments = [line for line in all_lines if not line.startswith('#')]
+    return "\n".join([line.strip() for line in no_comments if line.strip()] + [''])
 
 
 @click.command()
 @click.option("--dry-run/--no-dry-run", default=False)
+@click.option("--file", "-f", 'file_path')
 @click.argument("operations", nargs=-1)
-def cli(dry_run, operations):
-    full_command = "\n".join(operations) + "\n"
-    action_namespace = {'apt': apt}
-    exec full_command in action_namespace, action_namespace
+def cli(dry_run, file_path, operations):
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
+                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                        datefmt='%y-%m-%d %H:%M:%S')
+    script = command_script(file_path, operations)
+    logging.debug("Read script:\n%s", script)
+    full_command = script_substance(script)
+    logging.debug("Script substance:\n%s", full_command)
+    action_namespace = {'apt': apt, 'pip': pip}
+    exec(full_command, action_namespace)
 
     def extract_actions(action_obj):
         if isinstance(action_obj, Action):
@@ -20,6 +51,6 @@ def cli(dry_run, operations):
         return []
 
     actions = list(Action.registered())
-    logging.info("Loaded {} actions: {}".format(len(actions), ', '.join(map(repr, actions))))
+    logging.info("Loaded %d actions: %s", len(actions), ', '.join(map(repr, actions)))
     for act in actions:
         act.execute(dry_run)
