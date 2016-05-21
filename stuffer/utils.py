@@ -18,3 +18,9 @@ def natural_object_repr(obj):
 class NaturalReprMixin(object):
     def __repr__(self):
         return natural_object_repr(self)
+
+
+def str_split(cmd):
+    if isinstance(cmd, str):
+        return cmd.split()
+    return cmd

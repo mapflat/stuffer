@@ -68,18 +68,30 @@ Stuffer comes with builtin knowledge of Docker best practices, which it can enfo
 Design goals
 ------------
 
-Stuffer gives priority to:
+Stuffer design gives priority to:
 
 * Simplicity of use. No knowledge about the tool should be required in order to use it for simple scenarios by copying
-  examples. Some simplicity in the implementation is sacrificed in order to make the usage interface simple.
-* Ease of reuse. It should be simple to extract commands from snippets and put into reusable modules.
+  examples. Some simplicity in the implementation is sacrificed in order to make the usage interface simple. Actions are
+  named similarly to the corresponding shell commands.
+* Transparency. Whenever possible, actions are translated to shell commands. All actions are logged.
+* Ease of reuse. It should be simple to extract commands from snippets and convert them to reusable modules without a
+  rewrite.
 * Docker cache friendliness. Images built with similar commands should be able to share a prefix of commands in order to
   benefit frmo Docker image caching.
-* No dislike factors. Provisioning tools tend to be both loved and hated by users, for various reasons. There should be
-  no reason to have a strong dislike for stuffer.
+* No dislike factors. Provisioning tools tend to be loved and/or hated by users, for various reasons. There might be no
+  reason to be enamoured wuth stuffer, but there should be no reason to have a strong dislike for it, given that you
+  approve of Python and Docker.
 * Ease of debugging. Debugging stuffer recipes should be as easy as debugging standard Python programs.
 
 Moreover, the project model is design to facilitate sharing and reuse of code between users, see below. 
+
+---
+DSL
+---
+
+
+
+
 
 
 -------------------

@@ -1,9 +1,8 @@
-import logging
-
 import abc
+import logging
 import subprocess
 
-from stuffer.utils import NaturalReprMixin
+from stuffer.utils import NaturalReprMixin, str_split
 
 
 class Action(NaturalReprMixin):
@@ -11,14 +10,15 @@ class Action(NaturalReprMixin):
 
     __metaclass__ = abc.ABCMeta
 
-    _registry = set()
+    _registry = []
 
     @classmethod
     def registered(cls):
         return list(cls._registry)
 
     def __init__(self):
-        self._registry.add(self)
+        self._registry.append(self)
+        logging.debug("Registered action: {}".format(self))
 
     def execute(self, dry_run):
         logging.info("Executing {}".format(self))
@@ -29,17 +29,22 @@ class Action(NaturalReprMixin):
         raise NotImplementedError()
 
     def run(self, dry_run):
-        logging.info("> {}".format(self.command()))
-        cmd = self.split(self.command())
-        if not dry_run:
-            try:
-                output = subprocess.check_output(cmd)
-                logging.info(output)
-            except subprocess.CalledProcessError as err:
-                logging.exception("Command failed: {}\n{}".format(cmd, err.output))
-                raise
+        return run_cmd(str_split(self.command()), dry_run=dry_run)
 
-    def split(self, cmd):
-        if isinstance(cmd, str):
-            return cmd.split()
-        return cmd
+
+def run_cmd(cmd, *args, **kwargs):
+    dry_run = kwargs.pop('dry_run', False)
+    verbose = kwargs.pop('verbose', False)
+    joined = " ".join(cmd)
+    logging.info("> %s", joined)
+    if not dry_run:
+        try:
+            output = subprocess.check_output(cmd, *args, **kwargs).decode()
+            if verbose:
+                logging.info(output)
+            else:
+                logging.debug(output)
+            return output
+        except subprocess.CalledProcessError as err:
+            logging.error("Command %s failed:\n%s", joined, str(err.output))
+            raise
