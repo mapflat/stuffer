@@ -22,14 +22,23 @@ class Action(NaturalReprMixin):
 
     def execute(self, dry_run):
         logging.info("Executing {}".format(self))
+        for prereq in self.prerequisites():
+            prereq.run(dry_run)
         self.run(dry_run)
+
+    def prerequisites(self):
+        return []
 
     @abc.abstractmethod
     def command(self):
         raise NotImplementedError()
 
+    def use_shell(self):
+        return False
+
     def run(self, dry_run):
-        return run_cmd(str_split(self.command()), dry_run=dry_run)
+        cmd = self.command() if self.use_shell() else str_split(self.command())
+        return run_cmd(cmd, dry_run=dry_run, shell=self.use_shell())
 
 
 def run_cmd(cmd, *args, **kwargs):

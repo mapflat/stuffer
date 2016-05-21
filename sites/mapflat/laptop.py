@@ -11,6 +11,7 @@ apt.Install("acpi")
 # Needed for Intel graphics installer
 apt.Install("ttf-ancient-fonts")
 
+apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 
 # wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-3 -O - | \
 # sudo apt-key add -
