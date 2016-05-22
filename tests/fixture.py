@@ -1,10 +1,12 @@
 import logging
 import os
 import re
+import shlex
 import sys
 import unittest
 
 from click.testing import CliRunner
+from pathlib import Path
 
 from stuffer import main
 from stuffer.core import run_cmd
@@ -15,15 +17,17 @@ TEST_CONTAINER = "stuffer_test_ctr"
 
 
 class DockerTest(unittest.TestCase):
-    RUN_LOCAL = False
+    RUN_LOCAL = False  # True is useful for debugging.
 
     def setUp(self):
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
                             format='%(asctime)s %(levelname)-7s %(message)s',
                             datefmt='%y-%m-%d %H:%M:%S')
         self.remove_container()
-        os.system(" ".join(["docker", "build", "--tag", TEST_IMAGE, "{}/..".format(os.path.dirname(__file__))]))
-        run_cmd(["docker", "run", "--detach", "--name", TEST_CONTAINER, TEST_IMAGE, "sleep", "10000000"])
+        src_dir = Path(__file__).parents[1].resolve()
+        os.system(" ".join(["docker", "build", "--tag", TEST_IMAGE, str(src_dir)]))
+        run_cmd(["docker", "run", "--detach", "--name", TEST_CONTAINER,
+                 "--volume={}:/stuffer_src".format(str(src_dir)), TEST_IMAGE, "sleep", "10000000"])
         run_cmd(["docker", "exec", TEST_CONTAINER, "./setup.py", "sdist"])
         run_cmd(["docker", "exec", TEST_CONTAINER, "pip3", "install", "./dist/stuffer-0.1.tar.gz"])
 
@@ -42,24 +46,37 @@ class DockerTest(unittest.TestCase):
 
     def stuff(self, commands):
         if self.RUN_LOCAL:
-            runner = CliRunner()
-            logging.info("> stuffer --dry-run {}".format(" ".join(commands)))
-            result = runner.invoke(main.cli, ["--dry-run"] + commands, catch_exceptions=False)
-            if result.exit_code != 0:
-                logging.error(result.output)
-            else:
-                logging.debug(result.output)
-            assert result.exit_code == 0
-            return result.output
+            return self._stuff_locally(commands)
         return self.container_run(["stuffer"] + commands)
+
+    def _stuff_locally(self, commands):
+        runner = CliRunner()
+        logging.info("> stuffer --dry-run {}".format(" ".join([shlex.quote(c) for c in commands])))
+        result = runner.invoke(main.cli, ["--dry-run"] + commands, catch_exceptions=False)
+        if result.exit_code != 0:
+            logging.error(result.output)
+        else:
+            logging.debug(result.output)
+        assert result.exit_code == 0
+        return result.output
+
+    def _script_to_blocks(self, script):
+        lines = script.splitlines()
+        blocks = []
+        for line in lines:
+            if re.match(r'^\s+', line):
+                blocks[-1] = blocks[-1] + "\n" + line
+            else:
+                blocks.append(line)
+        return blocks
 
     def stuff_all_from(self, path):
         """Run all commands in a file. Avoid the alternative --file, in order to use Docker cache."""
         script = main.script_substance(main.command_script(path, None))
         # This will join lines that start with whitespace into previous line.
-        blocks = re.findall(r".*?\n\b", script, re.DOTALL)
+        blocks = self._script_to_blocks(script)
         for block in blocks:
             self.stuff([block])
 
     def container_run(self, commands):
-        return run_cmd(["docker", "exec", "--tty", TEST_CONTAINER] + commands)
+        return run_cmd(["docker", "exec", "--tty=false", TEST_CONTAINER] + commands)

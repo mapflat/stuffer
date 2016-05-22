@@ -1,6 +1,9 @@
 import logging
 import os
 
+from stuffer import content
+
+
 os.environ['LANG'] = 'C.UTF-8'
 os.environ['LC_ALL'] = 'C.UTF-8'
 
@@ -8,6 +11,7 @@ import click
 import sys
 
 from . import apt
+from . import files
 from . import pip
 from .core import Action
 
@@ -24,17 +28,16 @@ def command_script(file_path, operations):
         return contents
 
 
-def script_substance(content):
-    all_lines = content.splitlines()
+def script_substance(contents):
+    all_lines = contents.splitlines()
     no_comments = [line for line in all_lines if not line.startswith('#')]
-    return "\n".join([line.strip() for line in no_comments if line.strip()] + [''])
+    return "\n".join([line for line in no_comments if line.strip()] + [''])
 
 
 @click.command()
-@click.option("--dry-run/--no-dry-run", default=False)
 @click.option("--file", "-f", 'file_path')
 @click.argument("operations", nargs=-1)
-def cli(dry_run, file_path, operations):
+def cli(file_path, operations):
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                         datefmt='%y-%m-%d %H:%M:%S')
@@ -42,15 +45,10 @@ def cli(dry_run, file_path, operations):
     logging.debug("Read script:\n%s", script)
     full_command = script_substance(script)
     logging.debug("Script substance:\n%s", full_command)
-    action_namespace = {'apt': apt, 'pip': pip}
+    action_namespace = {'apt': apt, 'content': content, 'files': files, 'pip': pip}
     exec(full_command, action_namespace)
-
-    def extract_actions(action_obj):
-        if isinstance(action_obj, Action):
-            return [action_obj]
-        return []
 
     actions = list(Action.registered())
     logging.info("Loaded %d actions: %s", len(actions), ', '.join(map(repr, actions)))
     for act in actions:
-        act.execute(dry_run)
+        act.execute()
