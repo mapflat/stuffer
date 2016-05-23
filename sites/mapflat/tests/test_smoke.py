@@ -15,7 +15,6 @@ from fixture import DockerTest
 class SmokeTest(DockerTest):
     def test_laptop(self):
         self.stuff(["--file", "/stuffer/sites/mapflat/laptop.py"])
-        # self.stuff_all_from("{}/../laptop.py".format(os.path.dirname(__file__)))
         self.assertTrue(self.container_run(["restview", "--version"]).find("2.") != -1)
 
 

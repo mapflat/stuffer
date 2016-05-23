@@ -1,12 +1,11 @@
 import logging
 import os
-import re
 import shlex
 import sys
 import unittest
+from pathlib import Path
 
 from click.testing import CliRunner
-from pathlib import Path
 
 from stuffer import main
 from stuffer.core import run_cmd
@@ -59,24 +58,6 @@ class DockerTest(unittest.TestCase):
             logging.debug(result.output)
         assert result.exit_code == 0
         return result.output
-
-    def _script_to_blocks(self, script):
-        lines = script.splitlines()
-        blocks = []
-        for line in lines:
-            if re.match(r'^\s+', line):
-                blocks[-1] = blocks[-1] + "\n" + line
-            else:
-                blocks.append(line)
-        return blocks
-
-    def stuff_all_from(self, path):
-        """Run all commands in a file. Avoid the alternative --file, in order to use Docker cache."""
-        script = main.script_substance(main.command_script(path, None))
-        # This will join lines that start with whitespace into previous line.
-        blocks = self._script_to_blocks(script)
-        for block in blocks:
-            self.stuff([block])
 
     def container_run(self, commands):
         return run_cmd(["docker", "exec", "--tty=false", TEST_CONTAINER] + commands)
