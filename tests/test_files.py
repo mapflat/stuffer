@@ -6,7 +6,8 @@ sys.path.append("{}/..".format(os.path.dirname(__file__)))
 
 import fixture
 
-class FileContentInstallTest(fixture.DockerTest):
+
+class FileContentTest(fixture.DockerTest):
     def test_basic(self):
         self.stuff(['files.Content("/tmp/content_test", "test_content\\n")'])
         self.assertEquals(self.container_run(["cat", "/tmp/content_test"]),
@@ -29,3 +30,10 @@ class FileContentInstallTest(fixture.DockerTest):
     def test_output_of_shell(self):
         self.stuff(['files.Content("/tmp/output_5.out", content.OutputOf("echo 5", shell=True))'])
         self.assertEquals(self.container_run(["cat", "/tmp/output_5.out"]), "5\n")
+
+
+class FileTransformTest(fixture.DockerTest):
+    def test_basic(self):
+        self.stuff(['files.Content("/tmp/transform_test", "old_content\\n")'])
+        self.stuff(['files.Transform("/tmp/transform_test", lambda c: c.replace("old", "new"))'])
+        self.assertEquals(self.container_run(["cat", "/tmp/transform_test"]), "new_content\n")

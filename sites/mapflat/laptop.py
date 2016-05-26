@@ -1,5 +1,9 @@
+import re
+
 from stuffer import apt
 from stuffer import content
+from stuffer import debconf
+from stuffer import files
 from stuffer import pip
 
 
@@ -18,6 +22,13 @@ apt.Install("google-cloud-sdk")
 
 apt.Install("tox")
 
+debconf.SetSelections('ttf-mscorefonts-installer', 'msttcorefonts/accepted-mscorefonts-eula',
+                      'true')
+
+apt.Install("kubuntu-desktop")
+
+apt.Install('ubuntu-session')
+
 apt.Install("konqueror")
 
 apt.Install("htop")
@@ -35,7 +46,8 @@ pip.Install("awscli")
 apt.Install("jq")
 pip.Install("restview")
 
-# sed s/user-session=.*/user-session=kde-plasma/g /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
+files.Transform("/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf",
+                lambda c: re.sub(r"user-session=.*", "user-session=kde-plasma", c))
 
 # Download IntelliJ
 
