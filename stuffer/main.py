@@ -2,6 +2,7 @@ import logging
 import os
 
 from stuffer import content
+from stuffer import debconf
 
 
 os.environ['LANG'] = 'C.UTF-8'
@@ -45,7 +46,7 @@ def cli(file_path, operations):
     logging.debug("Read script:\n%s", script)
     full_command = script_substance(script)
     logging.debug("Script substance:\n%s", full_command)
-    action_namespace = {'apt': apt, 'content': content, 'files': files, 'pip': pip}
+    action_namespace = {'apt': apt, 'content': content, 'debconf': debconf, 'files': files, 'pip': pip}
     exec(full_command, action_namespace)
 
     actions = list(Action.registered())
