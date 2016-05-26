@@ -15,8 +15,22 @@ class Install(Action):
 
     def run(self):
         if self.update_first:
-           run_cmd(["apt-get", "update"])
+            run_cmd(["apt-get", "update"])
         run_cmd(["apt-get", "install", "--yes"] + self.packages)
+
+
+class AddRepository(Action):
+    """Add an apt repository with apt-add-repository"""
+
+    def __init__(self, name):
+        self.name = name
+        super(AddRepository, self).__init__()
+
+    def prerequisites(self):
+        return [Install("software-properties-common")]
+
+    def command(self):
+        return "add-apt-repository --yes " + self.name
 
 
 class KeyAdd(Action):
@@ -56,4 +70,4 @@ class SourceList(Action):
 
     def run(self):
         write_file_atomically(Path("/etc/apt/sources.list.d").joinpath(self.name).with_suffix(".list"),
-                              self.contents())
+                              self.contents().rstrip() + "\n")

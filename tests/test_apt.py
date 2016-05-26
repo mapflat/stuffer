@@ -31,3 +31,9 @@ class AptSourceListTest(fixture.DockerTest):
         self.stuff(['apt.SourceList("spotify", "deb http://repository.spotify.com stable non-free")'])
         self.stuff(['apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "BBEBDCB318AD50EC6865090613B00F1FD2C19886")'])
         self.stuff(['apt.Install(["xdg-utils", "spotify-client"], update_first=True)'])
+
+
+class AptAddRepositoryTest(fixture.DockerTest):
+    def test_add_repo(self):
+        self.stuff(['apt.AddRepository("ppa:webupd8team/java")'])
+        self.assertTrue(self.container_run(["ls", "/etc/apt/sources.list.d"]).find("webupd8team") != -1)
