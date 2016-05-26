@@ -8,20 +8,22 @@ from .core import Action, run_cmd
 class Install(Action):
     """Install a package with apt-get install."""
 
-    def __init__(self, package):
+    def __init__(self, package, update_first=False):
         self.packages = [package] if isinstance(package, str) else list(package)
+        self.update_first = update_first
         super(Install, self).__init__()
 
-    def command(self):
-        return "apt-get install --yes {}".format(" ".join(self.packages))
+    def run(self):
+        if self.update_first:
+           run_cmd(["apt-get", "update"])
+        run_cmd(["apt-get", "install", "--yes"] + self.packages)
 
 
 class KeyAdd(Action):
-    """Add a trusted key to apt."""
+    """Add a trusted key to apt using apt-key add method."""
 
-    def __init__(self, url, update=True):
+    def __init__(self, url):
         self.url = url
-        self.update = update
         super(KeyAdd, self).__init__()
 
     def prerequisites(self):
@@ -29,22 +31,24 @@ class KeyAdd(Action):
 
     def run(self):
         run_cmd("wget {} -O - | apt-key add -".format(self.url), shell=True)
-        if self.update:
-            Update().run()
 
 
-class Update(Action):
-    """Run apt-get update."""
+class KeyRecv(Action):
+    """Add a trusted key to apt using apt-key --recv-keys method."""
+
+    def __init__(self, keyserver, key):
+        self.keyserver = keyserver
+        self.key = key
+        super(KeyRecv, self).__init__()
 
     def command(self):
-        return "apt-get update"
+        return "apt-key adv  --keyserver {} --recv-keys {}".format(self.keyserver, self.key)
 
 
 class SourceList(Action):
-    def __init__(self, name, contents, update=True):
+    def __init__(self, name, contents):
         self.name = name
         self.contents = content.supplier(contents)
-        self.update = update
         super(SourceList, self).__init__()
 
     def prerequisites(self):
@@ -53,5 +57,3 @@ class SourceList(Action):
     def run(self):
         write_file_atomically(Path("/etc/apt/sources.list.d").joinpath(self.name).with_suffix(".list"),
                               self.contents())
-        if self.update:
-            Update().run()

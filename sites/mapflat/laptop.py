@@ -10,12 +10,16 @@ from stuffer import pip
 apt.Install('lsb-release')
 apt.SourceList('google-cloud-sdk',
                content.OutputOf('echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main"',
-                                shell=True), update=False)
+                                shell=True))
 
 apt.KeyAdd("https://packages.cloud.google.com/apt/doc/apt-key.gpg")
 
+apt.SourceList("spotify", "deb http://repository.spotify.com stable non-free")
+apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "BBEBDCB318AD50EC6865090613B00F1FD2C19886")
+
+
 # For gsutil
-apt.Install(['libffi-dev', 'libssl-dev'])
+apt.Install(['libffi-dev', 'libssl-dev'], update_first=True)
 pip.Install('cryptography')
 
 apt.Install("google-cloud-sdk")
@@ -30,6 +34,7 @@ apt.Install("kubuntu-desktop")
 apt.Install('ubuntu-session')
 
 apt.Install("konqueror")
+apt.Install("spotify-client")
 
 apt.Install("htop")
 apt.Install("acpi")
