@@ -2,6 +2,8 @@ import abc
 import logging
 import subprocess
 
+from pathlib import Path
+
 from stuffer.utils import NaturalReprMixin, str_split
 
 
@@ -34,6 +36,10 @@ class Action(NaturalReprMixin):
 
     def use_shell(self):
         return False
+
+    @staticmethod
+    def tmp_dir():
+        return Path("/tmp/stuffer_tmp")
 
     def run(self):
         cmd = self.command() if self.use_shell() else str_split(self.command())
