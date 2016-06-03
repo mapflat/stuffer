@@ -14,6 +14,7 @@ import sys
 from . import apt
 from . import files
 from . import pip
+from . import contrib
 from .core import Action
 
 
@@ -46,7 +47,10 @@ def cli(file_path, operations):
     logging.debug("Read script:\n%s", script)
     full_command = script_substance(script)
     logging.debug("Script substance:\n%s", full_command)
-    action_namespace = {'apt': apt, 'content': content, 'debconf': debconf, 'files': files, 'pip': pip}
+    action_namespace = {'apt': apt, 'content': content, 'contrib': contrib, 'debconf': debconf, 'files': files,
+                        'pip': pip}
+    if not Action.tmp_dir().is_dir():
+        Action.tmp_dir().mkdir(parents=True)
     exec(full_command, action_namespace)
 
     actions = list(Action.registered())

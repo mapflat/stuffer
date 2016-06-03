@@ -6,6 +6,7 @@ sys.path.append("{}/..".format(os.path.dirname(__file__)))
 
 import fixture
 
+
 class AptInstallTest(fixture.DockerTest):
     def test_basic(self):
         self.stuff(['apt.Install("pchar=1.5-2")'])
@@ -25,6 +26,7 @@ class AptKeyTest(fixture.DockerTest):
     def test_recv(self):
         self.stuff(['apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "BBEBDCB318AD50EC6865090613B00F1FD2C19886")'])
         self.assertTrue(self.container_run(["apt-key", "list"]).find("@spotify.com") != -1)
+
 
 class AptSourceListTest(fixture.DockerTest):
     def test_add(self):

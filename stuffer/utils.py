@@ -11,8 +11,8 @@ def natural_repr(obj):
 
 def natural_object_repr(obj):
     return "{}({})".format(obj.__class__.__name__, ". ".join(
-            ["{}={}".format(member, natural_repr(getattr(obj, member))) for member in dir(obj)
-             if member[0] != '_' and not callable(getattr(obj, member))]))
+        ["{}={}".format(member, natural_repr(getattr(obj, member))) for member in dir(obj)
+         if member[0] != '_' and not callable(getattr(obj, member))]))
 
 
 class NaturalReprMixin(object):

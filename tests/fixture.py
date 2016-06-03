@@ -16,7 +16,7 @@ TEST_CONTAINER = "stuffer_test_ctr"
 
 
 class DockerTest(unittest.TestCase):
-    RUN_LOCAL = False  # True is useful for debugging.
+    RUN_LOCAL = False  # True is useful for interactive debugging.
 
     def setUp(self):
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
@@ -50,8 +50,8 @@ class DockerTest(unittest.TestCase):
 
     def _stuff_locally(self, commands):
         runner = CliRunner()
-        logging.info("> stuffer --dry-run {}".format(" ".join([shlex.quote(c) for c in commands])))
-        result = runner.invoke(main.cli, ["--dry-run"] + commands, catch_exceptions=False)
+        logging.info("> stuffer {}".format(" ".join([shlex.quote(c) for c in commands])))
+        result = runner.invoke(main.cli, commands, catch_exceptions=False)
         if result.exit_code != 0:
             logging.error(result.output)
         else:
