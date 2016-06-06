@@ -54,8 +54,9 @@ debconf.SetSelections('ttf-mscorefonts-installer', 'msttcorefonts/accepted-mscor
 apt.Install('ubuntu-session')
 
 apt.Install("kubuntu-desktop")
-
 apt.Install("konqueror")
+apt.Install("xclip")
+
 apt.Install("spotify-client")
 
 apt.Install("htop")

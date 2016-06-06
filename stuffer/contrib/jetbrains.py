@@ -18,8 +18,7 @@ class IntelliJ(Action):
 
     def run(self):
         tar_file_name = "idea{}-{}.tar.gz".format(self.variant, self.version)
-        idea_dest = self.destination.joinpath("idea-{}-{}".format(self.variant, self.build))
-        if not idea_dest.is_dir():
+        if not list(self.destination.glob("idea-{}-{}.*".format(self.variant, self.build))):
             logging.info("Installing idea%s-%s", self.variant, self.version)
             if not self.destination.is_dir():
                 self.destination.mkdir(parents=True, exist_ok=True)
