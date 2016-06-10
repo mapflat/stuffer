@@ -55,6 +55,7 @@ apt.Install('ubuntu-session')
 
 apt.Install("kubuntu-desktop")
 apt.Install("konqueror")
+apt.Install("pandoc")
 apt.Install("xclip")
 
 apt.Install("spotify-client")
