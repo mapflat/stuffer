@@ -1,14 +1,17 @@
-# Stuffer - simplified, container-friendly provisioning
+Stuffer - simplified, container-friendly provisioning
+=====================================================
 
 Stuffer is a provisioning tool designed to be simple, and to be used in
 simple scenarios.
 
-## Project status
+Project status
+--------------
 
 Just started. The documents describe intentions, most of which are not
 implemented.
 
-## Use cases
+Use cases
+---------
 
 Stuffer is primarily intended to be used for provisioing container
 images, Docker in particular. As a secondary use case, it can be used to
@@ -20,22 +23,29 @@ state, Stuffer is primarily intended for building a machine from scratch
 to the desired state. Since the initial state is known, much of the
 complexity of existing tools is unnecessary.
 
-## Overview
+Overview
+--------
 
 Stuffer uses a Python embedded DSL for specifying provisioning
 directives. It is typically invoked with one or more command arguments
 on the command line, e.g.:
 
+::
+
     stuffer 'apt.Install("mercurial")'
 
 Multiple arguments are concatenated into a multiple line Python recipe:
 
+::
+
     stuffer \
       'for pkg in "mercurial", "gradle", "python-nose":' \
-      '  println "Installing", pkg' \
+      '  print("Installing", pkg)' \
       '  apt.Install(pkg)'
 
 Reused recipes can be factored out into Python modules for easier reuse:
+
+::
 
     stuffer development.Tools
 
@@ -49,6 +59,8 @@ Reused recipes can be factored out into Python modules for easier reuse:
 Stuffer comes with builtin knowledge of Docker best practices, which it
 can enforce for you:
 
+::
+
     Dockerfile:
       FROM phusion/baseimage:0.9.18
       ENV DEBIAN_FRONTEND noninteractive
@@ -57,35 +69,34 @@ can enforce for you:
 
       RUN stuffer ... # Install stuff
 
-      RUN stuffer docker.Epilogue  # Cleans temporary files, wanrs about known anti-patterns in the statements above.
+      RUN stuffer docker.Epilogue  # Cleans temporary files, warns about known anti-patterns in the statements above.
 
-## Design goals
+Design goals
+------------
 
 Stuffer design gives priority to:
 
--   Simplicity of use. No knowledge about the tool should be required in
-    order to use it for simple scenarios by copying examples. Some
-    simplicity in the implementation is sacrificed in order to make the
-    usage interface simple. Actions are named similarly to the
-    corresponding shell commands.
--   Transparency. Whenever possible, actions are translated to
-    shell commands. All actions are logged.
--   Ease of reuse. It should be simple to extract commands from snippets
-    and convert them to reusable modules without a rewrite.
--   Docker cache friendliness. Images built with similar commands should
-    be able to share a prefix of commands in order to benefit frmo
-    Docker image caching.
--   No dislike factors. Provisioning tools tend to be loved and/or hated
-    by users, for various reasons. There might be no reason to be
-    enamoured wuth stuffer, but there should be no reason to have a
-    strong dislike for it, given that you approve of Python and Docker.
--   Ease of debugging. Debugging stuffer recipes should be as easy as
-    debugging standard Python programs.
+-  Simplicity of use. No knowledge about the tool should be required in order to use it for simple scenarios by copying
+   examples. Some simplicity in the implementation is sacrificed in order to make the usage interface simple. Actions
+   are named similarly to the corresponding shell commands.
+-  Transparency. Whenever possible, actions are translated to shell commands. All actions are logged.
+-  Ease of reuse. It should be simple to extract commands from snippets and convert them to reusable modules without a
+   rewrite.
+-  Docker cache friendliness. Images built with similar commands should be able to share a prefix of commands in order
+   to benefit frmo Docker image caching.
+-  No dislike factors. Provisioning tools tend to be loved and/or hated by users, for various reasons. There might be no
+   reason to be enamoured wuth stuffer, but there should be no reason to have a strong dislike for it, given that you
+   approve of Python and Docker.
+-  Ease of debugging. Debugging stuffer recipes should be as easy as debugging standard Python programs.
+-  Avoid reinventing wheels. Use existing Python modules or external tools for tasks that have already been solved. Give
+   priority to reusing existing code over minimising dependencies. In particular, use Python 3 and click to save
+   boilerplate.
 
 Moreover, the project model is design to facilitate sharing and reuse of
 code between users, see below.
 
-## DSL
+DSL
+---
 
 The DSL is designed to be comprehensible by readers that are not
 familiar with stuffer. For example, the command apt.Install("mypack")
@@ -93,10 +104,18 @@ runs "apt-get install mypack". There is a balance between convenience
 and comprehensibility, and stuffer in most cases shuns magic that would
 create convenience in preference for more understandable code.
 
-The DSL is also designed to make it easy to do things that are correct and work well with containers, and difficult to
-do things that do not harmonise with containers. 
+The DSL is also designed to make it easy to do things that are correct
+and work well with containers, and difficult to do things that do not
+harmonise with containers.
 
-## Collaboration model
+The DSL is designed to be tool friendly (IntelliJ/PyCharm and pylint in particular), both for writing stuff files and for working on
+stuffer itself. For example, all imports are explicitly declared in order to make structure visible to tools.
+
+Python conventions are used for naming, i.e. CamelCase classes and snake_case functions. 
+
+
+Collaboration model
+-------------------
 
 Users are encouraged to put recipes under sites/ for others to get
 inspired. One package will be built for each site. This model may not
