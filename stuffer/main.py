@@ -9,12 +9,16 @@ os.environ['LANG'] = 'C.UTF-8'
 os.environ['LC_ALL'] = 'C.UTF-8'
 
 import click
+import click_config
 import sys
 
 from . import apt
+from . import configuration
+from . import contrib
 from . import files
 from . import pip
-from . import contrib
+from . import store
+from . import user
 from .core import Action
 
 
@@ -37,6 +41,7 @@ def script_substance(contents):
 
 
 @click.command()
+@click_config.wrap(module=configuration.config, sections=["store"])
 @click.option("--file", "-f", 'file_path')
 @click.argument("operations", nargs=-1)
 def cli(file_path, operations):
@@ -47,8 +52,8 @@ def cli(file_path, operations):
     logging.debug("Read script:\n%s", script)
     full_command = script_substance(script)
     logging.debug("Script substance:\n%s", full_command)
-    action_namespace = {'apt': apt, 'content': content, 'contrib': contrib, 'debconf': debconf, 'files': files,
-                        'pip': pip}
+    action_namespace = {'apt': apt, 'configuration': configuration, 'content': content, 'contrib': contrib,
+                        'debconf': debconf, 'files': files, 'pip': pip, 'store': store, 'user': user}
     if not Action.tmp_dir().is_dir():
         Action.tmp_dir().mkdir(parents=True)
     exec(full_command, action_namespace)

@@ -9,6 +9,7 @@ from click.testing import CliRunner
 
 from stuffer import main
 from stuffer.core import run_cmd
+from stuffer.utils import str_split
 
 
 TEST_IMAGE = "stuffer_test_image"
@@ -16,7 +17,7 @@ TEST_CONTAINER = "stuffer_test_ctr"
 
 
 class DockerTest(unittest.TestCase):
-    RUN_LOCAL = False  # True is useful for interactive debugging.
+    RUN_LOCAL = True  # True is useful for interactive debugging.
 
     def setUp(self):
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
@@ -44,9 +45,11 @@ class DockerTest(unittest.TestCase):
             run_cmd(["docker", "rmi", "--force", TEST_IMAGE])
 
     def stuff(self, commands):
+        full_commands = ["--conf-store", "directory: /tmp/stuffer_store"] + commands
         if self.RUN_LOCAL:
-            return self._stuff_locally(commands)
-        return self.container_run(["stuffer"] + commands)
+            return self._stuff_locally(full_commands)
+        return self.container_run(["stuffer"] + full_commands
+                                  )
 
     def _stuff_locally(self, commands):
         runner = CliRunner()
@@ -60,4 +63,4 @@ class DockerTest(unittest.TestCase):
         return result.output
 
     def container_run(self, commands):
-        return run_cmd(["docker", "exec", "--tty=false", TEST_CONTAINER] + commands)
+        return run_cmd(["docker", "exec", "--tty=false", TEST_CONTAINER] + str_split(commands))

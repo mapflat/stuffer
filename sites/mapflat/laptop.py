@@ -1,3 +1,4 @@
+import os
 import re
 
 from stuffer import apt
@@ -5,6 +6,7 @@ from stuffer import content
 from stuffer import debconf
 from stuffer import files
 from stuffer import pip
+from stuffer import user
 from stuffer.contrib import jetbrains
 
 apt.Install('lsb-release')
@@ -62,6 +64,9 @@ apt.Install("spotify-client")
 
 apt.Install("htop")
 apt.Install("acpi")
+debconf.SetSelections('debconf', 'wireshark-common/install-setuid', 'true')
+apt.Install('wireshark')
+user.AddToGroup(os.environ['SUDO_USER'], "wireshark")
 
 # Needed for Intel graphics installer
 apt.Install("ttf-ancient-fonts")
