@@ -1,6 +1,7 @@
 import logging
 import os
 import shlex
+import shutil
 import sys
 import unittest
 from pathlib import Path
@@ -17,7 +18,7 @@ TEST_CONTAINER = "stuffer_test_ctr"
 
 
 class DockerTest(unittest.TestCase):
-    RUN_LOCAL = True  # True is useful for interactive debugging.
+    RUN_LOCAL = False  # True is useful for interactive debugging.
 
     def setUp(self):
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
@@ -45,8 +46,10 @@ class DockerTest(unittest.TestCase):
             run_cmd(["docker", "rmi", "--force", TEST_IMAGE])
 
     def stuff(self, commands):
-        full_commands = ["--conf-store", "directory: /tmp/stuffer_store"] + commands
+        stuffer_store = "/tmp/stuffer_test_store"
+        full_commands = ["--conf-store", ("directory: %s" % stuffer_store)] + commands
         if self.RUN_LOCAL:
+            shutil.rmtree(stuffer_store, ignore_errors=True)
             return self._stuff_locally(full_commands)
         return self.container_run(["stuffer"] + full_commands
                                   )
