@@ -9,6 +9,7 @@ from stuffer import pip
 from stuffer import user
 from stuffer.contrib import jetbrains
 
+
 apt.Install('lsb-release')
 apt.SourceList('google-cloud-sdk',
                content.OutputOf('echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main"',
@@ -36,7 +37,7 @@ apt.SourceList("sbt", "deb https://dl.bintray.com/sbt/debian /")
 apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "642AC823")
 
 # For gsutil
-apt.Install(['libffi-dev', 'libssl-dev'], update_first=True)
+apt.Install(['libffi-dev', 'libssl-dev'])
 pip.Install('cryptography')
 
 apt.Install("google-cloud-sdk")
