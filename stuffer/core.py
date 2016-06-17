@@ -32,7 +32,7 @@ class Action(NaturalReprMixin):
         return []
 
     def command(self):
-        raise NotImplementedError()
+        pass
 
     def use_shell(self):
         return False
