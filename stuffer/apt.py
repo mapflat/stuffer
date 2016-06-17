@@ -2,19 +2,21 @@ from pathlib import Path
 
 from stuffer import content
 from stuffer.files import write_file_atomically
+from stuffer import store
 from .core import Action, run_cmd
 
+
+UPDATE_NEEDED_KEY = "stuffer.apt.update_needed"
 
 class Install(Action):
     """Install a package with apt-get install."""
 
-    def __init__(self, package, update_first=False):
+    def __init__(self, package):
         self.packages = [package] if isinstance(package, str) else list(package)
-        self.update_first = update_first
         super(Install, self).__init__()
 
     def run(self):
-        if self.update_first:
+        if store.get(UPDATE_NEEDED_KEY) == "True":
             run_cmd(["apt-get", "update"])
         run_cmd(["apt-get", "install", "--yes"] + self.packages)
 
@@ -29,8 +31,9 @@ class AddRepository(Action):
     def prerequisites(self):
         return [Install("software-properties-common")]
 
-    def command(self):
-        return "add-apt-repository --yes " + self.name
+    def run(self):
+        run_cmd(["add-apt-repository", "--yes", self.name])
+        store.Set(UPDATE_NEEDED_KEY, "True").run()
 
 
 class KeyAdd(Action):
@@ -45,6 +48,7 @@ class KeyAdd(Action):
 
     def run(self):
         run_cmd("wget {} -O - | apt-key add -".format(self.url), shell=True)
+        store.Set(UPDATE_NEEDED_KEY, "True").run()
 
 
 class KeyRecv(Action):
@@ -55,8 +59,9 @@ class KeyRecv(Action):
         self.key = key
         super(KeyRecv, self).__init__()
 
-    def command(self):
-        return "apt-key adv  --keyserver {} --recv-keys {}".format(self.keyserver, self.key)
+    def run(self):
+        run_cmd(["apt-key", "adv", "--keyserver", self.keyserver, "--recv-keys", self.key])
+        store.Set(UPDATE_NEEDED_KEY, "True").run()
 
 
 class SourceList(Action):
@@ -71,3 +76,4 @@ class SourceList(Action):
     def run(self):
         write_file_atomically(Path("/etc/apt/sources.list.d").joinpath(self.name).with_suffix(".list"),
                               self.contents().rstrip() + "\n")
+        store.Set(UPDATE_NEEDED_KEY, "True").run()
