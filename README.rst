@@ -83,9 +83,9 @@ Stuffer design gives priority to:
 -  Ease of reuse. It should be simple to extract commands from snippets and convert them to reusable modules without a
    rewrite.
 -  Docker cache friendliness. Images built with similar commands should be able to share a prefix of commands in order
-   to benefit frmo Docker image caching.
+   to benefit from Docker image caching.
 -  No dislike factors. Provisioning tools tend to be loved and/or hated by users, for various reasons. There might be no
-   reason to be enamoured wuth stuffer, but there should be no reason to have a strong dislike for it, given that you
+   reason to be enamoured with stuffer, but there should be no reason to have a strong dislike for it, given that you
    approve of Python and Docker.
 -  Ease of debugging. Debugging stuffer recipes should be as easy as debugging standard Python programs.
 -  Avoid reinventing wheels. Use existing Python modules or external tools for tasks that have already been solved. Give
