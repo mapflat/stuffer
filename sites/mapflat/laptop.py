@@ -23,6 +23,7 @@ apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "BBEBDCB318AD50EC6865090613B00F1FD2
 apt.SourceList("google-chrome", "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main")
 apt.KeyAdd("https://dl.google.com/linux/linux_signing_key.pub")
 
+# Used to work, but no more?
 # apt.SourceList("samsung", "deb http://www.bchemnet.com/suldr/ debian extra")
 # apt.KeyAdd("http://www.bchemnet.com/suldr/suldr.gpg")
 
@@ -63,6 +64,7 @@ apt.Install("xclip")
 
 apt.Install("spotify-client")
 
+apt.Install("libmbim-utils")
 apt.Install("htop")
 apt.Install("acpi")
 debconf.SetSelections('debconf', 'wireshark-common/install-setuid', 'true')
@@ -74,8 +76,6 @@ apt.Install("ttf-ancient-fonts")
 
 files.Transform("/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf",
                 lambda c: re.sub(r"user-session=.*", "user-session=kde-plasma", c))
-
-# Download IntelliJ
 
 jetbrains.IntelliJ("2016.1", "145")
 
