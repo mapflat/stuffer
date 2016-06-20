@@ -30,6 +30,17 @@ class Transform(Action):
         write_file_atomically(self.path, new_content)
 
 
+class Mkdir(Action):
+    """Create a directory, unless it exists."""
+
+    def __init__(self, path):
+        self.path = path
+        super().__init__()
+
+    def command(self):
+        return "mkdir -p {}".format(self.path)
+
+
 def write_file_atomically(path, contents, suffix=".stuffer_tmp"):
     tmp_file = path.with_suffix(path.suffix + suffix)
     with tmp_file.open('w') as tmp:

@@ -15,6 +15,8 @@ apt.SourceList('google-cloud-sdk',
                content.OutputOf('echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main"',
                                 shell=True))
 
+apt.AddRepository("ppa:webupd8team/java")
+
 apt.KeyAdd("https://packages.cloud.google.com/apt/doc/apt-key.gpg")
 
 apt.SourceList("spotify", "deb http://repository.spotify.com stable non-free")
@@ -37,12 +39,14 @@ apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 apt.SourceList("sbt", "deb https://dl.bintray.com/sbt/debian /")
 apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "642AC823")
 
+apt.Install('oracle-java8-installer')
+
 # For gsutil
 apt.Install(['libffi-dev', 'libssl-dev'])
 pip.Install('cryptography')
 
 apt.Install("google-cloud-sdk")
-
+apt.Install("gradle")
 apt.Install("tox")
 
 # Development
