@@ -37,3 +37,9 @@ class FileTransformTest(fixture.DockerTest):
         self.stuff(['files.Content("/tmp/transform_test", "old_content\\n")'])
         self.stuff(['files.Transform("/tmp/transform_test", lambda c: c.replace("old", "new"))'])
         self.assertEquals(self.container_run(["cat", "/tmp/transform_test"]), "new_content\n")
+
+
+class FileMkdirTest(fixture.DockerTest):
+    def test_mkdir(self):
+        self.stuff(['files.Mkdir("/new_dir")'])
+        self.assertEquals(self.container_run(["ls", "-d", "/new_dir"]), "/new_dir\n")
