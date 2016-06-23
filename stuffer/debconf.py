@@ -3,9 +3,10 @@ from stuffer.core import Action
 
 
 class SetSelections(Action):
-    def __init__(self, section, template, value):
+    def __init__(self, section, template, type_, value):
         self.section = section
         self.template = template
+        self.type_ = type_
         self.value = value
         super(SetSelections, self).__init__()
 
@@ -16,4 +17,4 @@ class SetSelections(Action):
         return True
 
     def command(self):
-        return "echo {} {} select {} | debconf-set-selections".format(self.section, self.template, self.value)
+        return "echo {} {} {} {} | debconf-set-selections".format(self.section, self.template, self.type_, self.value)
