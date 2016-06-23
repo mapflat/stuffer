@@ -39,6 +39,8 @@ apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 apt.SourceList("sbt", "deb https://dl.bintray.com/sbt/debian /")
 apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "642AC823")
 
+debconf.SetSelections('debconf', 'shared/accepted-oracle-license-v1-1', 'select', 'true')
+debconf.SetSelections('debconf', 'shared/accepted-oracle-license-v1-1', 'seen', 'true')
 apt.Install('oracle-java8-installer')
 
 # For gsutil
@@ -57,7 +59,7 @@ apt.Install("jq")
 pip.Install("restview")
 
 debconf.SetSelections('ttf-mscorefonts-installer', 'msttcorefonts/accepted-mscorefonts-eula',
-                      'true')
+                      'select', 'true')
 
 apt.Install('ubuntu-session')
 
@@ -71,7 +73,7 @@ apt.Install("spotify-client")
 apt.Install("libmbim-utils")
 apt.Install("htop")
 apt.Install("acpi")
-debconf.SetSelections('debconf', 'wireshark-common/install-setuid', 'true')
+debconf.SetSelections('debconf', 'wireshark-common/install-setuid', 'select', 'true')
 apt.Install('wireshark')
 user.AddToGroup(os.environ['SUDO_USER'], "wireshark")
 
