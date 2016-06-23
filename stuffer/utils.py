@@ -2,8 +2,10 @@
 
 
 def natural_repr(obj):
-    if isinstance(obj, list) or isinstance(obj, tuple):
-        return repr(map(natural_repr, obj))
+    if isinstance(obj, list):
+        return repr(list(map(natural_repr, obj)))
+    if isinstance(obj, tuple):
+        return repr(tuple(map(natural_repr, obj)))
     if isinstance(obj, dict):
         return repr(dict([map(natural_repr, kv) for kv in obj.items()]))
     return repr(obj)
