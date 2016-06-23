@@ -1,10 +1,19 @@
 import os
 import sys
 
+import re
+
 
 sys.path.append("{}/..".format(os.path.dirname(__file__)))
 
 import fixture
+
+
+class FileChmodTest(fixture.DockerTest):
+    def test_chmod_600(self):
+        self.stuff(['files.Chmod("/usr/share/common-licenses/GPL-2", 0o600)'])
+        self.assertTrue(re.search(r"-rw------- ",
+                                  self.container_run(["ls", "-l", "/usr/share/common-licenses/GPL-2"])))
 
 
 class FileContentTest(fixture.DockerTest):
@@ -32,14 +41,23 @@ class FileContentTest(fixture.DockerTest):
         self.assertEquals(self.container_run(["cat", "/tmp/output_5.out"]), "5\n")
 
 
-class FileTransformTest(fixture.DockerTest):
-    def test_basic(self):
-        self.stuff(['files.Content("/tmp/transform_test", "old_content\\n")'])
-        self.stuff(['files.Transform("/tmp/transform_test", lambda c: c.replace("old", "new"))'])
-        self.assertEquals(self.container_run(["cat", "/tmp/transform_test"]), "new_content\n")
+class FileDownloadTest(fixture.DockerTest):
+    def test_docker_compose(self):
+        self.stuff(['files.DownloadFile("https://github.com/docker/compose/releases/download/1.6.2/'
+                    'docker-compose-Linux-x86_64", '
+                    '"/usr/local/bin/docker-compose")'])
+        self.assertEquals(self.container_run(["shasum", "/usr/local/bin/docker-compose"]).split()[0],
+                          "82129d4e90c7544a52738a570747d653bdb656db")
 
 
 class FileMkdirTest(fixture.DockerTest):
     def test_mkdir(self):
         self.stuff(['files.Mkdir("/new_dir")'])
         self.assertEquals(self.container_run(["ls", "-d", "/new_dir"]), "/new_dir\n")
+
+
+class FileTransformTest(fixture.DockerTest):
+    def test_basic(self):
+        self.stuff(['files.Content("/tmp/transform_test", "old_content\\n")'])
+        self.stuff(['files.Transform("/tmp/transform_test", lambda c: c.replace("old", "new"))'])
+        self.assertEquals(self.container_run(["cat", "/tmp/transform_test"]), "new_content\n")
