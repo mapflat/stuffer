@@ -29,10 +29,15 @@ apt.KeyAdd("https://dl.google.com/linux/linux_signing_key.pub")
 # apt.SourceList("samsung", "deb http://www.bchemnet.com/suldr/ debian extra")
 # apt.KeyAdd("http://www.bchemnet.com/suldr/suldr.gpg")
 
+apt.Install(["apt-transport-https", "ca-certificates"])
 apt.KeyRecv("hkp://p80.pool.sks-keyservers.net:80", "58118E89F3A912897C070ADBF76221572C52609D")
 apt.SourceList("docker",
                content.OutputOf('echo "deb https://apt.dockerproject.org/repo ubuntu-$(lsb_release -c -s) main"',
                                 shell=True))
+docker_compose = "/usr/local/bin/docker-compose"
+files.DownloadFile("https://github.com/docker/compose/releases/download/1.6.2/docker-compose-Linux-x86_64",
+                   docker_compose)
+files.Chmod(docker_compose, 0o755)
 
 apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 

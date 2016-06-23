@@ -1,7 +1,21 @@
+import shutil
+import urllib.request
 from pathlib import Path
 
 from stuffer import content
 from stuffer.core import Action
+
+
+class Chmod(Action):
+    """Set permissions for a file."""
+
+    def __init__(self, path, permissions):
+        self.path = Path(path)
+        self.permissions = permissions
+        super().__init__()
+
+    def command(self):
+        return "chmod {:o} {}".format(self.permissions, str(self.path))
 
 
 class Content(Action):
@@ -16,6 +30,30 @@ class Content(Action):
         write_file_atomically(self.path, self.contents())
 
 
+class DownloadFile(Action):
+    """Download and install a single file from a URL."""
+
+    def __init__(self, url, path):
+        self.url = url
+        self.path = Path(path)
+        super().__init__()
+
+    def run(self):
+        local_file, _ = urllib.request.urlretrieve(self.url)
+        shutil.move(local_file, str(self.path))
+
+
+class Mkdir(Action):
+    """Create a directory, unless it exists."""
+
+    def __init__(self, path):
+        self.path = path
+        super().__init__()
+
+    def command(self):
+        return "mkdir -p {}".format(self.path)
+
+
 class Transform(Action):
     """Transform the contents of a file"""
 
@@ -28,17 +66,6 @@ class Transform(Action):
         with self.path.open() as f:
             new_content = self.transform(f.read())
         write_file_atomically(self.path, new_content)
-
-
-class Mkdir(Action):
-    """Create a directory, unless it exists."""
-
-    def __init__(self, path):
-        self.path = path
-        super().__init__()
-
-    def command(self):
-        return "mkdir -p {}".format(self.path)
 
 
 def write_file_atomically(path, contents, suffix=".stuffer_tmp"):
