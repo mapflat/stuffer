@@ -1,3 +1,2 @@
 class config(object):
-    class store(object):
-        directory = "/var/lib/stuffer/store"
+    store_directory = None

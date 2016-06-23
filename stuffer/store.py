@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from stuffer.configuration import config
 from .core import Action
 
@@ -7,7 +5,7 @@ from .core import Action
 class StoreAction(Action):
     @staticmethod
     def store_dir():
-        return Path(config.store.directory)
+        return config.store_directory
 
     def create_store_dir(self):
         self.store_dir().mkdir(parents=True, exist_ok=True)

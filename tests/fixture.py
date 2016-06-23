@@ -47,7 +47,7 @@ class DockerTest(unittest.TestCase):
 
     def stuff(self, commands):
         stuffer_store = "/tmp/stuffer_test_store"
-        full_commands = ["--conf-store", ("directory: %s" % stuffer_store)] + commands
+        full_commands = ["--store-dir", stuffer_store] + commands
         if self.RUN_LOCAL:
             shutil.rmtree(stuffer_store, ignore_errors=True)
             return self._stuff_locally(full_commands)

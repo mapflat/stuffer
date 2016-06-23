@@ -1,6 +1,8 @@
 import logging
 import os
 
+from pathlib import Path
+
 from stuffer import content
 from stuffer import debconf
 
@@ -9,7 +11,6 @@ os.environ['LANG'] = 'C.UTF-8'
 os.environ['LC_ALL'] = 'C.UTF-8'
 
 import click
-import click_config
 import sys
 
 from . import apt
@@ -41,13 +42,15 @@ def script_substance(contents):
 
 
 @click.command()
-@click_config.wrap(module=configuration.config, sections=["store"])
 @click.option("--file", "-f", 'file_path')
+@click.option("--store-dir", "-s", 'store_dir', default="/var/lib/stuffer/store")
 @click.argument("operations", nargs=-1)
-def cli(file_path, operations):
+def cli(file_path, store_dir, operations):
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                         datefmt='%y-%m-%d %H:%M:%S')
+    configuration.config.store_directory = Path(store_dir)
+
     script = command_script(file_path, operations)
     logging.debug("Read script:\n%s", script)
     full_command = script_substance(script)
