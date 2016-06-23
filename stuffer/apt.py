@@ -16,8 +16,9 @@ class Install(Action):
         super(Install, self).__init__()
 
     def run(self):
-        if store.get(UPDATE_NEEDED_KEY) == "True":
+        if store.get(UPDATE_NEEDED_KEY) != "False":
             run_cmd(["apt-get", "update"])
+            store.Set(UPDATE_NEEDED_KEY, "False").run()
         run_cmd(["apt-get", "install", "--yes"] + self.packages)
 
 
