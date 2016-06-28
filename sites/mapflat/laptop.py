@@ -37,7 +37,7 @@ apt.SourceList("docker",
 docker_compose = "/usr/local/bin/docker-compose"
 files.DownloadFile("https://github.com/docker/compose/releases/download/1.6.2/docker-compose-Linux-x86_64",
                    docker_compose)
-files.Chmod(docker_compose, 0o755)
+files.Chmod(0o755, docker_compose)
 
 apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 
@@ -58,6 +58,7 @@ apt.Install("tox")
 
 # Development
 apt.Install("python3-pip")
+apt.Install("sbt")
 
 pip.Install("awscli")
 apt.Install("jq")

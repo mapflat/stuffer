@@ -11,7 +11,7 @@ import fixture
 
 class FileChmodTest(fixture.DockerTest):
     def test_chmod_600(self):
-        self.stuff(['files.Chmod("/usr/share/common-licenses/GPL-2", 0o600)'])
+        self.stuff(['files.Chmod(0o600, "/usr/share/common-licenses/GPL-2")'])
         self.assertTrue(re.search(r"-rw------- ",
                                   self.container_run(["ls", "-l", "/usr/share/common-licenses/GPL-2"])))
 
