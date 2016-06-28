@@ -17,6 +17,9 @@ class Chmod(Action):
     def command(self):
         return "chmod {:o} {}".format(self.permissions, str(self.path))
 
+    def __repr__(self):
+        return "Chmod(permissions=0o{:o}, path={})".format(self.permissions, str(self.path))
+
 
 class Content(Action):
     """Set the contents of a file."""
