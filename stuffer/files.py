@@ -9,9 +9,9 @@ from stuffer.core import Action
 class Chmod(Action):
     """Set permissions for a file."""
 
-    def __init__(self, path, permissions):
-        self.path = Path(path)
+    def __init__(self, permissions, path):
         self.permissions = permissions
+        self.path = Path(path)
         super().__init__()
 
     def command(self):
