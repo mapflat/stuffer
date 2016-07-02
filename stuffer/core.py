@@ -57,20 +57,18 @@ class Action(NaturalReprMixin):
         run_cmd(["tar", "--directory", str(destination), "-xf", str(local_archive)])
 
 
-
-
-
 def run_cmd(cmd, *args, **kwargs):
-    verbose = kwargs.pop('verbose', False)
+    return run_cmd_bytes(cmd, *args, **kwargs).decode(encoding="ascii", errors="ignore")
+
+
+def run_cmd_bytes(cmd, *args, **kwargs):
     joined = " ".join(str_split(cmd))
     logging.info("> %s", joined)
     try:
-        output = subprocess.check_output(cmd, *args, **kwargs).decode()
-        if verbose:
-            logging.info(output)
-        else:
-            logging.debug(output)
-        return output
+        output_bytes = subprocess.check_output(cmd, *args, **kwargs)
+        output = output_bytes.decode(encoding="ascii", errors="ignore")
+        logging.debug(output)
+        return output_bytes
     except subprocess.CalledProcessError as err:
         logging.error("Command %s failed:\n%s", joined, str(err.output))
         raise
