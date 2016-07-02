@@ -70,7 +70,6 @@ class Transform(Action):
             new_content = self.transform(f.read())
         write_file_atomically(self.path, new_content)
 
-
 def write_file_atomically(path, contents, suffix=".stuffer_tmp"):
     tmp_file = path.with_suffix(path.suffix + suffix)
     with tmp_file.open('w') as tmp:
