@@ -1,17 +1,16 @@
 import logging
 import os
-
 from pathlib import Path
 
 from stuffer import content
 from stuffer import debconf
+from stuffer import docker
 
 
 os.environ['LANG'] = 'C.UTF-8'
 os.environ['LC_ALL'] = 'C.UTF-8'
 
 import click
-import sys
 
 from . import apt
 from . import configuration
@@ -43,12 +42,12 @@ def script_substance(contents):
 
 @click.command()
 @click.option("--file", "-f", 'file_path')
+@click.option("--log-file", "-l", 'log_file', default="/var/log/stuffer.log")
 @click.option("--store-dir", "-s", 'store_dir', default="/var/lib/stuffer/store")
+@click.option('--verbose', '-v', default=False)
 @click.argument("operations", nargs=-1)
-def cli(file_path, store_dir, operations):
-    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
-                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                        datefmt='%y-%m-%d %H:%M:%S')
+def cli(file_path, log_file, store_dir, verbose, operations):
+    setup_logging(log_file, verbose)
     configuration.config.store_directory = Path(store_dir)
 
     script = command_script(file_path, operations)
@@ -56,7 +55,7 @@ def cli(file_path, store_dir, operations):
     full_command = script_substance(script)
     logging.debug("Script substance:\n%s", full_command)
     action_namespace = {'apt': apt, 'configuration': configuration, 'content': content, 'contrib': contrib,
-                        'debconf': debconf, 'files': files, 'pip': pip, 'store': store, 'user': user}
+                        'debconf': debconf, 'docker': docker, 'files': files, 'pip': pip, 'store': store, 'user': user}
     if not Action.tmp_dir().is_dir():
         Action.tmp_dir().mkdir(parents=True)
     exec(full_command, action_namespace)
@@ -65,3 +64,14 @@ def cli(file_path, store_dir, operations):
     logging.info("Loaded %d actions: %s", len(actions), ', '.join(map(repr, actions)))
     for act in actions:
         act.execute()
+
+
+def setup_logging(log_file, verbose):
+    logging.basicConfig(filename=log_file, filemode='a', level=logging.DEBUG,
+                        format='%(asctime)s %(levelname)-8s : %(message)s',
+                        datefmt='%y-%m-%d %H:%M:%S')
+    console = logging.StreamHandler()
+    console.setLevel(logging.DEBUG if verbose else logging.INFO)
+    formatter = logging.Formatter('%(levelname)-8s : %(message)s')
+    console.setFormatter(formatter)
+    logging.getLogger('').addHandler(console)
