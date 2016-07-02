@@ -1,4 +1,3 @@
-import re
 import sys
 
 from pathlib import Path
@@ -12,4 +11,4 @@ import fixture
 class JdkTest(fixture.DockerTest):
     def test_install_jdk_8(self):
         self.stuff(['contrib.java.Jdk(8)'])
-        self.assertTrue(re.search(r'javac 1\.8\.', self.container_run(['sh', '-c', 'javac -version 2>&1'])))
+        self.assertRegex(self.container_run(['sh', '-c', 'javac -version 2>&1']), r'javac 1\.8\.')
