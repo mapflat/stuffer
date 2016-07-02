@@ -4,8 +4,8 @@ from stuffer import apt
 from stuffer.core import Action
 
 
-class Kafka(Action):
-    def __init__(self, version, scala_version='2.11', destination='/opt/kafka'):
+class Install(Action):
+    def __init__(self, version, scala_version='2.11', destination='/opt'):
         self.version = version
         self.scala_version = scala_version
         self.destination = Path(destination)
