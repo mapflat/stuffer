@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 from stuffer import apt
-from stuffer.core import Action, run_cmd
+from stuffer.core import Action
 
 
 class IntelliJ(Action):
@@ -20,10 +20,5 @@ class IntelliJ(Action):
         tar_file_name = "idea{}-{}.tar.gz".format(self.variant, self.version)
         if not list(self.destination.glob("idea-{}-{}.*".format(self.variant, self.build))):
             logging.info("Installing idea%s-%s", self.variant, self.version)
-            if not self.destination.is_dir():
-                self.destination.mkdir(parents=True, exist_ok=True)
-            local_tar = self.tmp_dir().joinpath(tar_file_name)
-            if not local_tar.exists():
-                tar_url = 'http://download.jetbrains.com/idea/{}'.format(tar_file_name)
-                run_cmd(["wget", "--quiet", "--output-document", str(local_tar), tar_url])
-            run_cmd(["tar", "--directory", str(self.destination), "-xf", str(local_tar)])
+            tar_url = 'http://download.jetbrains.com/idea/{}'.format(tar_file_name)
+            self._extract_net_archive(tar_url, self.destination)

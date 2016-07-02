@@ -3,6 +3,7 @@ import logging
 import subprocess
 
 from pathlib import Path
+from urllib.parse import urlparse
 
 from stuffer.utils import NaturalReprMixin, str_split
 
@@ -44,6 +45,19 @@ class Action(NaturalReprMixin):
     def run(self):
         cmd = self.command() if self.use_shell() else str_split(self.command())
         return run_cmd(cmd, shell=self.use_shell())
+
+    def _extract_net_archive(self, uri, destination):
+        # TODO: Verify checksum
+        archive_name = Path(urlparse(uri).path).parts[-1]
+        if not destination.is_dir():
+            destination.mkdir(parents=True, exist_ok=True)
+        local_archive = self.tmp_dir() / archive_name
+        if not local_archive.exists():
+            run_cmd(["wget", "--quiet", "--output-document", str(local_archive), uri])
+        run_cmd(["tar", "--directory", str(destination), "-xf", str(local_archive)])
+
+
+
 
 
 def run_cmd(cmd, *args, **kwargs):
