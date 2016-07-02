@@ -10,5 +10,5 @@ import fixture
 
 class InstallTest(fixture.DockerTest):
     def test_install_kafka(self):
-        self.stuff(['contrib.kafka.Kafka("0.10.0.0")'])
-        self.assertRegex(self.container_run(['ls', '/opt/kafka/kafka_2.11-0.10.0.0/bin']), r'kafka-server-start\.sh')
+        self.stuff(['contrib.kafka.Install("0.10.0.0")'])
+        self.assertRegex(self.container_run(['ls', '/opt/kafka_2.11-0.10.0.0/bin']), r'kafka-server-start\.sh')
