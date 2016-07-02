@@ -7,6 +7,7 @@ from stuffer import debconf
 from stuffer import files
 from stuffer import pip
 from stuffer import user
+from stuffer.contrib import java
 from stuffer.contrib import jetbrains
 
 
@@ -14,8 +15,6 @@ apt.Install('lsb-release')
 apt.SourceList('google-cloud-sdk',
                content.OutputOf('echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main"',
                                 shell=True))
-
-apt.AddRepository("ppa:webupd8team/java")
 
 apt.KeyAdd("https://packages.cloud.google.com/apt/doc/apt-key.gpg")
 
@@ -44,9 +43,7 @@ apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 apt.SourceList("sbt", "deb https://dl.bintray.com/sbt/debian /")
 apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "642AC823")
 
-debconf.SetSelections('debconf', 'shared/accepted-oracle-license-v1-1', 'select', 'true')
-debconf.SetSelections('debconf', 'shared/accepted-oracle-license-v1-1', 'seen', 'true')
-apt.Install('oracle-java8-installer')
+java.Jdk(8)
 
 # For gsutil
 apt.Install(['libffi-dev', 'libssl-dev'])
