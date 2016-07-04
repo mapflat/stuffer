@@ -58,7 +58,8 @@ class Action(NaturalReprMixin):
 
 
 def run_cmd(cmd, *args, **kwargs):
-    return run_cmd_bytes(cmd, *args, **kwargs).decode(encoding="ascii", errors="ignore")
+    output = run_cmd_bytes(cmd, *args, **kwargs)
+    return output.decode(encoding="ascii", errors="ignore")
 
 
 def run_cmd_bytes(cmd, *args, **kwargs):
