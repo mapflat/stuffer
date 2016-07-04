@@ -44,7 +44,7 @@ def script_substance(contents):
 @click.option("--file", "-f", 'file_path')
 @click.option("--log-file", "-l", 'log_file', default="/var/log/stuffer.log")
 @click.option("--store-dir", "-s", 'store_dir', default="/var/lib/stuffer/store")
-@click.option('--verbose', '-v', default=False)
+@click.option('--verbose', '-v', is_flag=True)
 @click.argument("operations", nargs=-1)
 def cli(file_path, log_file, store_dir, verbose, operations):
     setup_logging(log_file, verbose)

@@ -1,3 +1,4 @@
+import getpass
 import os
 import re
 
@@ -9,6 +10,9 @@ from stuffer import pip
 from stuffer import user
 from stuffer.contrib import java
 from stuffer.contrib import jetbrains
+
+# Does not work yet. Need to figure out a reuse model.
+# from sites.mapflat import development
 
 
 apt.Install('lsb-release')
@@ -73,12 +77,14 @@ apt.Install("xclip")
 
 apt.Install("spotify-client")
 
+# development.DebugTools()
+# development.NetDebugTools()
 apt.Install("libmbim-utils")
 apt.Install("htop")
 apt.Install("acpi")
 debconf.SetSelections('debconf', 'wireshark-common/install-setuid', 'select', 'true')
 apt.Install('wireshark')
-user.AddToGroup(os.environ['SUDO_USER'], "wireshark")
+user.AddToGroup(os.environ.get('SUDO_USER', getpass.getuser()), "wireshark")
 
 # Needed for Intel graphics installer
 apt.Install("ttf-ancient-fonts")
