@@ -11,6 +11,7 @@ from stuffer import user
 from stuffer.contrib import java
 from stuffer.contrib import jetbrains
 
+
 # Does not work yet. Need to figure out a reuse model.
 # from sites.mapflat import development
 
@@ -37,10 +38,18 @@ apt.KeyRecv("hkp://p80.pool.sks-keyservers.net:80", "58118E89F3A912897C070ADBF76
 apt.SourceList("docker",
                content.OutputOf('echo "deb https://apt.dockerproject.org/repo ubuntu-$(lsb_release -c -s) main"',
                                 shell=True))
+
 docker_compose = "/usr/local/bin/docker-compose"
-files.DownloadFile("https://github.com/docker/compose/releases/download/1.6.2/docker-compose-Linux-x86_64",
-                   docker_compose)
+docker_compose_version = "1.6.2"
+files.DownloadFile("https://github.com/docker/compose/releases/download/{}/docker-compose-Linux-x86_64".format(
+    docker_compose_version),
+    docker_compose)
 files.Chmod(0o755, docker_compose)
+docker_compose_complete = "/etc/bash_completion.d/docker-compose"
+files.DownloadFile("https://raw.githubusercontent.com/docker/compose/{}/contrib/completion/bash/docker-compose".format(
+    docker_compose_version),
+    docker_compose_complete)
+files.Chmod(0o644, docker_compose_complete)
 
 apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 
