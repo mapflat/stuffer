@@ -50,10 +50,10 @@ class Action(NaturalReprMixin):
         # TODO: Verify checksum
         archive_name = Path(urlparse(uri).path).parts[-1]
         if not destination.is_dir():
-            destination.mkdir(parents=True, exist_ok=True)
+            destination.mkdir(parents=True)
         local_archive = self.tmp_dir() / archive_name
         if not local_archive.exists():
-            run_cmd(["wget", "--quiet", "--output-document", str(local_archive), uri])
+            run_cmd(["wget", "--output-document", str(local_archive), uri])
         run_cmd(["tar", "--directory", str(destination), "-xf", str(local_archive)])
 
 
