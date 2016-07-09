@@ -65,6 +65,15 @@ class KeyRecv(Action):
         store.Set(UPDATE_NEEDED_KEY, "True").run()
 
 
+class Purge(Action):
+    def __init__(self, package):
+        self.packages = [package] if isinstance(package, str) else list(package)
+        super().__init__()
+
+    def command(self):
+        return ["apt-get", "purge", "--yes"] + self.packages
+
+
 class SourceList(Action):
     def __init__(self, name, contents):
         self.name = name
