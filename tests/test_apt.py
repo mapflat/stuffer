@@ -19,6 +19,12 @@ class AptInstallTest(fixture.DockerTest):
         self.assertTrue(self.container_run(["ls", "/usr/share/dict/irish"]).strip() == "/usr/share/dict/irish")
 
 
+class AptPurgeTest(fixture.DockerTest):
+    def test_purge(self):
+        self.stuff(['apt.Purge("manpages")'])
+        self.assertRegex(self.container_run(["sh", "-c", "test -f /usr/share/man/man7/man.7.gz || echo Gone"]), r'Gone')
+
+
 class AptKeyTest(fixture.DockerTest):
     def test_add(self):
         self.stuff(['apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")'])

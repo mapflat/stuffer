@@ -158,5 +158,5 @@ files.Transform("/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf",
 idea = jetbrains.IntelliJ("2016.1.3", "145")
 files.Chown(system.real_user(), utils.DeferStr(idea.path), group=system.real_user(), recursive=True)
 
-#apt.Remove('thunderbird')
+apt.Purge('thunderbird')
 
