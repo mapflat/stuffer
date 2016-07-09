@@ -21,6 +21,24 @@ class Chmod(Action):
         return "Chmod(permissions=0o{:o}, path={})".format(self.permissions, str(self.path))
 
 
+class Chown(Action):
+    """Set ownership for files."""
+
+    def __init__(self, owner, path, group=None, recursive=False):
+        self.owner = owner
+        self.path = path
+        self.group = group
+        self.recursive = recursive
+        super().__init__()
+
+    def command(self):
+        return "chown {} {}{} {}".format(
+            "--recursive" if self.recursive else "",
+            self.owner,
+            "." + self.group if self.group else "",
+            self.path)
+
+
 class Content(Action):
     """Set the contents of a file."""
 
@@ -69,6 +87,7 @@ class Transform(Action):
         with self.path.open() as f:
             new_content = self.transform(f.read())
         write_file_atomically(self.path, new_content)
+
 
 def write_file_atomically(path, contents, suffix=".stuffer_tmp"):
     tmp_file = path.with_suffix(path.suffix + suffix)

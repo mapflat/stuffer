@@ -16,6 +16,18 @@ class FileChmodTest(fixture.DockerTest):
                                   self.container_run(["ls", "-l", "/usr/share/common-licenses/GPL-2"])))
 
 
+class FileChownTest(fixture.DockerTest):
+    def test_chown(self):
+        self.stuff(['files.Chown("games", "/usr/share/common-licenses/GPL-2")'])
+        self.assertTrue(re.search(r" games ",
+                                  self.container_run(["ls", "-l", "/usr/share/common-licenses/GPL-2"])))
+
+    def test_chown_r(self):
+        self.stuff(['files.Chown("games", "/usr/share/common-licenses", recursive=True)'])
+        self.assertTrue(re.search(r" games ",
+                                  self.container_run(["ls", "-l", "/usr/share/common-licenses/GPL-3"])))
+
+
 class FileContentTest(fixture.DockerTest):
     def test_basic(self):
         self.stuff(['files.Content("/tmp/content_test", "test_content\\n")'])

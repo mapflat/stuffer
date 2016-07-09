@@ -8,7 +8,8 @@ class StoreAction(Action):
         return config.store_directory
 
     def create_store_dir(self):
-        self.store_dir().mkdir(parents=True, exist_ok=True)
+        if not self.store_dir().is_dir():
+            self.store_dir().mkdir(parents=True)
 
     @staticmethod
     def key_path(key):
@@ -23,9 +24,11 @@ class Set(StoreAction):
 
     def run(self):
         self.create_store_dir()
-        self.key_path(self.key).write_text(self.value)
+        with self.key_path(self.key).open('w') as f:
+            f.write(self.value)
 
 
 def get(key):
     if StoreAction.key_path(key).exists():
-        return StoreAction.key_path(key).read_text()
+        with StoreAction.key_path(key).open('r') as f:
+            return f.read()

@@ -18,7 +18,9 @@ from . import contrib
 from . import files
 from . import pip
 from . import store
+from . import system
 from . import user
+from . import utils
 from .core import Action
 
 
@@ -55,7 +57,8 @@ def cli(file_path, log_file, store_dir, verbose, operations):
     full_command = script_substance(script)
     logging.debug("Script substance:\n%s", full_command)
     action_namespace = {'apt': apt, 'configuration': configuration, 'content': content, 'contrib': contrib,
-                        'debconf': debconf, 'docker': docker, 'files': files, 'pip': pip, 'store': store, 'user': user}
+                        'debconf': debconf, 'docker': docker, 'files': files, 'pip': pip, 'store': store,
+                        'system': system, 'user': user, 'utils': utils}
     if not Action.tmp_dir().is_dir():
         Action.tmp_dir().mkdir(parents=True)
     exec(full_command, action_namespace)

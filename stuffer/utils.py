@@ -26,3 +26,11 @@ def str_split(cmd):
     if isinstance(cmd, str):
         return cmd.split()
     return cmd
+
+
+class DeferStr(object):
+    def __init__(self, supplier):
+        self.supplier = supplier
+
+    def __str__(self):
+        return str(self.supplier())
