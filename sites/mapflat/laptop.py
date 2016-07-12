@@ -58,6 +58,11 @@ apt.Install('dropbox')
 
 java.Jdk(8)
 
+apt.Install('python3')
+apt.Install("python3-pip")
+pip.Install('pip', upgrade=True)
+apt.Purge('python3-pip')
+
 # For gsutil
 apt.Install(['libffi-dev', 'libssl-dev'])
 pip.Install('cryptography')
@@ -70,12 +75,12 @@ apt.Install("gradle")
 apt.Install('groovy')
 apt.Install("jq")
 apt.Install('kdiff3')
+apt.Install('maven')
 apt.Install('mercurial')
 apt.Install('mysql-client')
 apt.Install('pylint3')
 apt.Install('python3-doc')
 apt.Install('python3-mysqldb')
-apt.Install("python3-pip")
 apt.Install('python3-venv')
 pip.Install("restview")
 apt.Install('ruby')
@@ -111,7 +116,7 @@ debconf.SetSelections('lightdm', 'shared/default-x-display-manager', 'select', '
 debconf.SetSelections('sddm', 'shared/default-x-display-manager', 'select', 'sddm')
 
 # https://bugs.launchpad.net/ubuntu/+source/kaccounts-providers/+bug/1488909
-# system.ShellCommand(["dpkg", "-r", 'account-plugin-google', 'unity-scope-plugin'])
+system.ShellCommand("dpkg --remove account-plugin-google unity-scope-gdrive")
 apt.Install("kubuntu-desktop")
 apt.Install("konqueror")
 debconf.SetSelections('ttf-mscorefonts-installer', 'msttcorefonts/accepted-mscorefonts-eula', 'select', 'true')
@@ -119,6 +124,7 @@ apt.Install('kubuntu-restricted-extras')
 
 apt.Install('aspell-sv')
 apt.Install('graphviz')
+apt.Install('hugo')
 apt.Install("pandoc")
 apt.Install('ttf-xfree86-nonfree')
 apt.Install("xclip")
