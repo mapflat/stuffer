@@ -72,7 +72,7 @@ apt.Install("google-cloud-sdk")
 # Development
 apt.Install('git-core')
 apt.Install("gradle")
-apt.Install('groovy')
+apt.Install('groovy2')
 apt.Install("jq")
 apt.Install('kdiff3')
 apt.Install('maven')
@@ -161,7 +161,7 @@ apt.Install("ttf-ancient-fonts")
 files.Transform("/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf",
                 lambda c: re.sub(r"user-session=.*", "user-session=kde-plasma", c))
 
-idea = jetbrains.IntelliJ("2016.1.3", "145")
+idea = jetbrains.IntelliJ("2016.2", "162")
 files.Chown(system.real_user(), utils.DeferStr(idea.path), group=system.real_user(), recursive=True)
 
 apt.Purge('thunderbird')
