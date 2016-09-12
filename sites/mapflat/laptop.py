@@ -136,7 +136,7 @@ apt.Install('kaffeine')
 apt.Install(['mplayer', 'mplayer-skins', 'mplayer-fonts', 'smplayer'])
 
 #apt.Install('skype')
-apt.Install('xpra')
+apt.Install('xpra=0.14.35-1')
 
 apt.Install("spotify-client")
 
@@ -161,7 +161,7 @@ apt.Install("ttf-ancient-fonts")
 files.Transform("/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf",
                 lambda c: re.sub(r"user-session=.*", "user-session=kde-plasma", c))
 
-idea = jetbrains.IntelliJ("2016.2", "162")
+idea = jetbrains.IntelliJ("2016.1", "145")
 files.Chown(system.real_user(), utils.DeferStr(idea.path), group=system.real_user(), recursive=True)
 
 apt.Purge('thunderbird')
