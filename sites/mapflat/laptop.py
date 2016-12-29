@@ -22,7 +22,6 @@ apt.SourceList('google-cloud-sdk',
                content.OutputOf('echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main"',
                                 shell=True))
 
-
 apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "BBEBDCB318AD50EC6865090613B00F1FD2C19886")
 apt.SourceList("spotify", "deb http://repository.spotify.com stable non-free")
 
@@ -62,6 +61,8 @@ apt.Install('python3')
 apt.Install("python3-pip")
 pip.Install('pip', upgrade=True)
 apt.Purge('python3-pip')
+
+files.Content("/etc/resolvconf/resolv.conf.d/tail", "nameserver 8.8.8.8\n")
 
 # For gsutil
 apt.Install(['libffi-dev', 'libssl-dev'])
@@ -135,8 +136,8 @@ apt.Install('pinta')
 apt.Install('kaffeine')
 apt.Install(['mplayer', 'mplayer-skins', 'mplayer-fonts', 'smplayer'])
 
-#apt.Install('skype')
-apt.Install('xpra=0.14.35-1')
+# apt.Install('skype')
+# apt.Install('xpra=0.14.35-1')
 
 apt.Install("spotify-client")
 
@@ -165,4 +166,3 @@ idea = jetbrains.IntelliJ("2016.1", "145")
 files.Chown(system.real_user(), utils.DeferStr(idea.path), group=system.real_user(), recursive=True)
 
 apt.Purge('thunderbird')
-
