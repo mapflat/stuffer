@@ -132,3 +132,23 @@ Snippets worth reuse can be put under stuffer/contrib/. Files under stuffer/cont
 be maintained by the contributor.
 
 Routines for installing third-party software should also go under stuffer/contrib.
+
+
+Contributing
+------------
+
+New code should be covered with integration tests. Avoid unit tests - since the purpose of stuffer is integration,
+there is little value testing scenarios that are not authentic. Strive to figure out a way to test functionality with
+Docker containers.
+
+In order to run the test suite, run "tox" in the project root directory.
+
+When tests pass, fork https://bitbucket.org/mapflat/stuffer, push your code to the fork and create a pull request.
+
+
+Deployment
+----------
+
+In order to create an installable distribution package, run "./setup.py sdist" from the project root directory.
+Install with "pip3 install dist/stuffer-*.tar.gz".
+
