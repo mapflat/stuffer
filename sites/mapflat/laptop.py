@@ -48,6 +48,10 @@ apt.KeyAdd("https://download.01.org/gfx/RPM-GPG-KEY-ilg-3")
 apt.KeyRecv("hkp://keyserver.ubuntu.com:80", "642AC823")
 apt.SourceList("sbt", "deb https://dl.bintray.com/sbt/debian /")
 
+# Disabled automatic unattended upgrades by overriding 20auto-upgrades.
+files.Content("/etc/apt/apt.conf.d/90no-auto-upgrades", 'APT::Periodic::Unattended-Upgrade "0";\n')
+
+
 apt.Install('google-chrome-stable')
 apt.Install('libnss3-tools')
 
@@ -63,6 +67,7 @@ pip.Install('pip', upgrade=True)
 apt.Purge('python3-pip')
 
 files.Content("/etc/resolvconf/resolv.conf.d/tail", "nameserver 8.8.8.8\n")
+files.Content("/etc/sudoers.d/nopasswd", "%sudo ALL=NOPASSWD: ALL\n")
 
 # For gsutil
 apt.Install(['libffi-dev', 'libssl-dev'])
@@ -90,6 +95,8 @@ apt.Install('scala')
 apt.Install('scala-doc')
 apt.Install('subversion')
 apt.Install("tox")
+apt.Install("vagrant")
+apt.Install("virtualbox")
 
 apt.Install('docker.io')
 user.AddToGroup(system.real_user(), 'docker')
@@ -130,6 +137,12 @@ apt.Install("pandoc")
 apt.Install('ttf-xfree86-nonfree')
 apt.Install("xclip")
 
+apt.Install('psutils')
+apt.Install('texlive-latex-base')
+apt.Install('texlive-fonts-recommended')
+apt.Install('texlive-lang-european')
+apt.Install('tgif')
+
 apt.Install('gphoto2')
 apt.Install('pinta')
 
@@ -162,7 +175,7 @@ apt.Install("ttf-ancient-fonts")
 files.Transform("/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf",
                 lambda c: re.sub(r"user-session=.*", "user-session=kde-plasma", c))
 
-idea = jetbrains.IntelliJ("2016.1", "145")
+idea = jetbrains.IntelliJ("2016.3.2", "163")
 files.Chown(system.real_user(), utils.DeferStr(idea.path), group=system.real_user(), recursive=True)
 
 apt.Purge('thunderbird')
