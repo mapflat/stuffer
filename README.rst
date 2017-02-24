@@ -47,7 +47,7 @@ Multiple arguments are concatenated into a multiple line Python recipe:
 Reused recipes can be factored out into Python modules for easier reuse:
 ::
 
-    stuffer development.Tools
+    stuffer 'development.Tools()'
 
     development.py:
       from stuffer.core import Group
@@ -63,7 +63,6 @@ can enforce for you:
 
     Dockerfile:
       FROM phusion/baseimage:0.9.18
-      ENV DEBIAN_FRONTEND noninteractive
 
       RUN stuffer 'docker.Prologue()'  # Verifies e.g. that base image is sound.
 

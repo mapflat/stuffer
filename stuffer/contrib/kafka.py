@@ -12,7 +12,7 @@ class Install(Action):
         super().__init__()
 
     def prerequisites(self):
-        return [apt.Install('wget')]
+        return [apt.Install('wget', update=False)]
 
     def run(self):
         self._extract_net_archive('http://apache.mirrors.spacedump.net/kafka/{}/kafka_{}-{}.tgz'.format(

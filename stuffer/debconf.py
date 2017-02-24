@@ -11,7 +11,7 @@ class SetSelections(Action):
         super(SetSelections, self).__init__()
 
     def prerequisites(self):
-        return [apt.Install('debconf-utils')]
+        return [apt.Install('debconf-utils', update=False)]
 
     def use_shell(self):
         return True

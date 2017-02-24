@@ -58,18 +58,13 @@ class Action(NaturalReprMixin):
 
 
 def run_cmd(cmd, *args, **kwargs):
-    output = run_cmd_bytes(cmd, *args, **kwargs)
-    return output.decode(encoding="ascii", errors="ignore")
-
-
-def run_cmd_bytes(cmd, *args, **kwargs):
     joined = " ".join(str_split(cmd))
     logging.info("> %s", joined)
     try:
         output_bytes = subprocess.check_output(cmd, *args, **kwargs)
         output = output_bytes.decode(encoding="ascii", errors="ignore")
         logging.debug(output)
-        return output_bytes
+        return output
     except subprocess.CalledProcessError as err:
         logging.error("Command %s failed:\n%s", joined, str(err.output))
         raise
