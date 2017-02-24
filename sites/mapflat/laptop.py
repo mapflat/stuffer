@@ -29,9 +29,7 @@ apt.KeyAdd("https://dl.google.com/linux/linux_signing_key.pub")
 apt.SourceList("google-chrome", "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main")
 
 apt.KeyRecv('pgp.mit.edu', '5044912E')
-apt.SourceList('dropbox',
-               content.OutputOf('echo "deb http://linux.dropbox.com/ubuntu/ $(lsb_release -c -s) main"',
-                                shell=True))
+apt.SourceList('dropbox', "deb http://linux.dropbox.com/ubuntu/ xenial main")
 
 # Used to work, but no more?
 # apt.SourceList("samsung", "deb http://www.bchemnet.com/suldr/ debian extra")
@@ -64,7 +62,6 @@ java.Jdk(8)
 apt.Install('python3')
 apt.Install("python3-pip")
 pip.Install('pip', upgrade=True)
-apt.Purge('python3-pip')
 
 files.Content("/etc/resolvconf/resolv.conf.d/tail", "nameserver 8.8.8.8\n")
 files.Content("/etc/sudoers.d/nopasswd", "%sudo ALL=NOPASSWD: ALL\n")
@@ -76,7 +73,12 @@ pip.Install('cryptography')
 apt.Install("google-cloud-sdk")
 
 # Development
+apt.Install('ansible')
+apt.Install('autoconf')
+apt.Install('automake')
+apt.Install('ca-certificates-java')
 apt.Install('git-core')
+apt.Install('golang-go')
 apt.Install("gradle")
 apt.Install('groovy2')
 apt.Install("jq")
@@ -84,6 +86,9 @@ apt.Install('kdiff3')
 apt.Install('maven')
 apt.Install('mercurial')
 apt.Install('mysql-client')
+apt.Install('nodejs')
+apt.Install('npm')
+apt.Install('postgresql')
 apt.Install('pylint3')
 apt.Install('python3-doc')
 apt.Install('python3-mysqldb')
@@ -93,6 +98,7 @@ apt.Install('ruby')
 apt.Install("sbt")
 apt.Install('scala')
 apt.Install('scala-doc')
+apt.Install('scons')
 apt.Install('subversion')
 apt.Install("tox")
 apt.Install("vagrant")
@@ -120,18 +126,24 @@ debconf.SetSelections('ttf-mscorefonts-installer', 'msttcorefonts/accepted-mscor
 
 apt.Install('ubuntu-session')
 
-debconf.SetSelections('lightdm', 'shared/default-x-display-manager', 'select', 'sddm')
-debconf.SetSelections('sddm', 'shared/default-x-display-manager', 'select', 'sddm')
+#debconf.SetSelections('lightdm', 'shared/default-x-display-manager', 'select', 'sddm')
+#debconf.SetSelections('sddm', 'shared/default-x-display-manager', 'select', 'sddm')
 
 # https://bugs.launchpad.net/ubuntu/+source/kaccounts-providers/+bug/1488909
 system.ShellCommand("dpkg --remove account-plugin-google unity-scope-gdrive")
 apt.Install("kubuntu-desktop")
+apt.Install('kscreen')
+apt.Install('sddm')
+apt.Install('kde-config-sddm')
+apt.Install('kde-style-oxygen-qt5')
 apt.Install("konqueror")
 debconf.SetSelections('ttf-mscorefonts-installer', 'msttcorefonts/accepted-mscorefonts-eula', 'select', 'true')
 apt.Install('kubuntu-restricted-extras')
 
 apt.Install('aspell-sv')
+apt.Install('calibre')
 apt.Install('graphviz')
+apt.Install('gv')
 apt.Install('hugo')
 apt.Install("pandoc")
 apt.Install('ttf-xfree86-nonfree')
@@ -157,25 +169,34 @@ apt.Install("spotify-client")
 # development.DebugTools()
 # development.NetDebugTools()
 apt.Install("acpi")
+apt.Install("autossh")
+apt.Install('charon-cmd')
+apt.Install('cpufrequtils')
 apt.Install(['gkrellm', 'gkrelltop'])
 apt.Install("htop")
 apt.Install('httrack')
 apt.Install("libmbim-utils")
 apt.Install('lsof')
+apt.Install('speedtest-cli')
 apt.Install('strace')
+apt.Install('tcptrack')
+apt.Install('tmux')
 apt.Install('tree')
 
 debconf.SetSelections('debconf', 'wireshark-common/install-setuid', 'select', 'true')
 apt.Install('wireshark')
 user.AddToGroup(system.real_user(), "wireshark")
 
-# Needed for Intel graphics installer
+# Needed for Intel graphipipcs installer
 apt.Install("ttf-ancient-fonts")
 
 files.Transform("/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf",
                 lambda c: re.sub(r"user-session=.*", "user-session=kde-plasma", c))
 
-idea = jetbrains.IntelliJ("2016.3.2", "163")
+idea = jetbrains.IntelliJ("2016.3.4", "163")
 files.Chown(system.real_user(), utils.DeferStr(idea.path), group=system.real_user(), recursive=True)
+
+idea_2016_1 = jetbrains.IntelliJ("2016.1.4", "145")
+files.Chown(system.real_user(), utils.DeferStr(idea_2016_1.path), group=system.real_user(), recursive=True)
 
 apt.Purge('thunderbird')
