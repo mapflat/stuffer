@@ -14,7 +14,7 @@ class IntelliJ(Action):
         super(IntelliJ, self).__init__()
 
     def prerequisites(self):
-        return [apt.Install(["wget"])]
+        return [apt.Install(["wget"], update=False)]
 
     def run(self):
         tar_file_name = "idea{}-{}.tar.gz".format(self.variant, self.version)

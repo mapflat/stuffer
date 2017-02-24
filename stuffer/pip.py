@@ -11,7 +11,7 @@ class Install(Action):
         super(Install, self).__init__()
 
     def prerequisites(self):
-        return [apt.Install(["python3-pip"])]	
+        return [apt.Install(["python3-pip"], update=False)]
 
     def command(self):
         return "pip3 install {}{}".format("--upgrade " if self.upgrade else "", self.package)
