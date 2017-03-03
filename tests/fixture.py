@@ -6,7 +6,7 @@ import sys
 import unittest
 from pathlib import Path
 
-from click.testing import CliRunner
+from stuffer.click.testing import CliRunner
 
 from stuffer import main
 from stuffer.core import run_cmd
