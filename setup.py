@@ -8,7 +8,6 @@ setup(
     maintainer_email="lalle@mapflat.com",
     url="http://bitbucket.org/mapflat/stuffer",
     version="0.1",
-    install_requires=["click>=3.3"],
     packages=find_packages(exclude=["tests"]),
     entry_points="""
       [console_scripts]
