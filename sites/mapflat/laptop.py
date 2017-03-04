@@ -101,6 +101,7 @@ apt.Install('scala-doc')
 apt.Install('scons')
 apt.Install('subversion')
 apt.Install("tox")
+pip.Install('twine')
 apt.Install("vagrant")
 apt.Install("virtualbox")
 
