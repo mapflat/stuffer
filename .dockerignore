@@ -1,0 +1,13 @@
+### Python template
+*.py[cod]
+
+build/
+dist/
+eggs/
+.eggs/
+sdist/
+*.egg-info/
+*.egg
+
+.tox/
+.cache
