@@ -7,7 +7,7 @@ setup(
     maintainer="Lars Albertsson",
     maintainer_email="lalle@mapflat.com",
     url="http://bitbucket.org/mapflat/stuffer",
-    version="0.1",
+    version="0.0.1",
     packages=find_packages(exclude=["tests"]),
     entry_points="""
       [console_scripts]
